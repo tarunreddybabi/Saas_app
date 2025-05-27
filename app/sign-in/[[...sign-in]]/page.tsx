@@ -1,7 +1,11 @@
+import { SignIn } from "@clerk/nextjs";
+
 const Page = () => {
   return (
-    <div>Sign In</div>
-  )
-}
+    <main className="flex items-center justify-center">
+      <SignIn />
+    </main>
+  );
+};
 
-export default Page
+export default Page;
