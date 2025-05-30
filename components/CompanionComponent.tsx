@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import Lottie, { LottieRefCurrentProps } from "lottie-react";
 import soundwaves from "@/constants/soundwaves.json";
+import { addToSessionHistory } from "@/lib/actions/companion.actions";
 
 const enum CallStatus {
   INACTIVE = "INACTIVE",
@@ -42,7 +43,10 @@ const CompanionComponent = ({
 
   useEffect(() => {
     const onCallStart = () => setCallStatus(CallStatus.ACTIVE);
-    const onCallEnd = () => setCallStatus(CallStatus.FINISHED);
+    const onCallEnd = () => {
+      setCallStatus(CallStatus.FINISHED)
+      addToSessionHistory(companionId)
+    }
 
     const onMessage = (message: Message) => {
       if (message.type === "transcript" && message.transcriptType === "final") {
@@ -83,17 +87,14 @@ const CompanionComponent = ({
   };
   const handleCall = async () => {
     setCallStatus(CallStatus.CONNECTING);
+
     const assistantOverrides = {
-      variableValues: {
-        subject,
-        topic,
-        style,
-      },
+      variableValues: { subject, topic, style },
       clientMessages: ["transcript"],
       serverMessages: [],
     };
     // @ts-expect-error
-    vapi.start(configureAssistant((voice, style), assistantOverrides));
+    vapi.start(configureAssistant(voice, style), assistantOverrides);
   };
 
   return (
@@ -150,7 +151,7 @@ const CompanionComponent = ({
             />
             <p className="font-bold text-2xl">{userName}</p>
           </div>
-          <button className="btn-mic" onClick={toggleMicrophone}>
+          <button className="btn-mic" onClick={toggleMicrophone} disabled={callStatus !== CallStatus.ACTIVE}>
             <Image
               src={isMuted ? "/icons/mic-off.svg" : "/icons/mic-on.svg"}
               alt="mic"
