@@ -1,5 +1,8 @@
-import Link  from "next/link";
+"use client";
+import Link from "next/link";
 import Image from "next/image";
+import { addBookmark } from "@/lib/actions/companion.actions";
+import { usePathname } from "next/navigation";
 
 interface CompanionCardProps {
   id: string;
@@ -17,18 +20,34 @@ const CompanionCard = ({
   duration,
   color,
 }: CompanionCardProps) => {
+  const path = usePathname();
+  const handleSubmit = async () => {
+    const data = await addBookmark(id, path);
+    if (data) {
+      console.log(data);
+    } else {
+      console.log("not executed");
+    }
+  };
   return (
     <article className="companion-card" style={{ backgroundColor: color }}>
       <div className="flex justify-between items-center">
         <div className="subject-badge">{subject}</div>
-        <button className="companion-bookmark">
-          <Image
-            src="/icons/bookmark.svg"
-            alt="bookmark"
-            width={12.5}
-            height={15}
-          />
-        </button>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSubmit();
+          }}
+        >
+          <button className="companion-bookmark">
+            <Image
+              src="/icons/bookmark.svg"
+              alt="bookmark"
+              width={12.5}
+              height={15}
+            />
+          </button>
+        </form>
       </div>
       <h2 className="text-2xl font-bold">{name}</h2>
       <p className="text-sm">{topic}</p>
