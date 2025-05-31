@@ -1,7 +1,7 @@
+'use client'
 import Link from "next/link";
 import Image from "next/image";
 import { addBookmark } from "@/lib/actions/companion.actions";
-import { usePathname } from "next/navigation";
 
 interface CompanionCardProps {
   id: string;
@@ -19,10 +19,10 @@ const CompanionCard = ({
   duration,
   color,
 }: CompanionCardProps) => {
-  const path = usePathname();
+  // const path = usePathname();
 
   const handleSubmit = async () => {
-    const data = await addBookmark(id, path);
+    const data = await addBookmark(id, "/");
   };
   return (
     <article className="companion-card" style={{ backgroundColor: color }}>
